@@ -15,7 +15,7 @@ public class Candidate {
 
 
     public String getCandidateInfo() {
-        return String.format("Name: %s\nVote Percent: %.2f%%\nVotes: %d\nVotes Behind: %d\n",
+        return String.format("Name: %s\n\tVote Percent: %.2f%%\n\tVotes: %d\n\tVotes Behind: %d\n",
                 name,
                 percent,
                 votes,

@@ -10,12 +10,12 @@ import com.jaunt.Element;
 import com.jaunt.Elements;
 import com.jaunt.UserAgent;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
@@ -29,7 +29,8 @@ public class WebHook {
     @Getter
     private HashMap<Party, HashMap<String, Candidate>> candidates = new HashMap<>();
     @Getter
-    private AtomicBoolean changesMade = new AtomicBoolean(true);
+    @Setter
+    private volatile boolean changesMade = true;
 
     public WebHook(PrimaryElections instance) {
         this.instance = instance;
@@ -52,7 +53,6 @@ public class WebHook {
     }
 
     public void setupResults() {
-        Log.log(Level.INFO, "CALLED!");
         UserAgent userAgent;
         try {
             lock.lock();
@@ -108,13 +108,11 @@ public class WebHook {
         Candidate oldCandidate = map.get(candidate.getName());
         if (oldCandidate != null) {
             if (!candidate.hasChanged(oldCandidate)) {
-                System.out.println("Hasn't changed.");
                 return;
             }
-            System.out.println("Has changed.");
         }
         map.put(candidate.getName(), candidate);
         candidates.put(candidate.getParty(), map);
-        changesMade.set(true);
+        changesMade = true;
     }
 }

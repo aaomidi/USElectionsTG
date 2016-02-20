@@ -38,17 +38,22 @@ public class TelegramHook {
             public void run() {
                 try {
                     webHook.getLock().lock();
-                    if (webHook.getChangesMade().compareAndSet(false, false)) {
+                    if (!webHook.isChangesMade()) {
                         return;
                     }
+                    webHook.setChangesMade(false);
                     for (HashMap<String, Candidate> map : webHook.getCandidates().values()) {
-                        StringBuilder sb = new StringBuilder("%s results:");
+                        StringBuilder sb = new StringBuilder();
                         Candidate randomCandidate = null;
                         for (Candidate candidate : map.values()) {
                             sb.append(candidate.getCandidateInfo());
                             randomCandidate = candidate;
                         }
-                        String msg = String.format(sb.toString(), randomCandidate.getParty().getPartyName());
+                        if (randomCandidate == null) {
+                            throw new Error("No candidates?");
+                        }
+                        sb.insert(0, String.format("%s results:\n", randomCandidate.getParty().getPartyName()));
+                        String msg = sb.toString();
                         channel.sendMessage(msg, bot);
                     }
                 } catch (Exception ex) {
