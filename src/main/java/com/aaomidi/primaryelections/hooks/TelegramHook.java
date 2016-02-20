@@ -60,8 +60,10 @@ public class TelegramHook {
                             sb.insert(0, String.format("\uD83D\uDC34 %s Caucus from Nevada:\n", randomCandidate.getParty().getPartyName()));
                         } else {
                             sb.insert(0, String.format("\uD83D\uDC18 %s Primary from South Carolina:\n", randomCandidate.getParty().getPartyName()));
-                            sb.append("\nStay up to date with @USElections!");
                         }
+
+                        sb.append(String.format("Precincts Reporting: %.2f", webHook.getPrecinctsReporting().get(party)));
+                        sb.append("\nStay up to date with @USElections!");
                         String msg = sb.toString();
                         channel.sendMessage(msg, bot);
                     }
@@ -73,7 +75,7 @@ public class TelegramHook {
             }
         };
 
-        timer.schedule(task, 2000, 15000);
+        timer.schedule(task, 1000, 60000);
     }
 
 }

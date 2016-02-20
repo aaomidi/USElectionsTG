@@ -25,12 +25,14 @@ import java.util.logging.Level;
 public class WebHook {
     private final PrimaryElections instance;
     @Getter
-    private ReentrantLock lock = new ReentrantLock();
+    private ReentrantLock lock = new ReentrantLock(true);
     @Getter
     private HashMap<Party, HashMap<String, Candidate>> candidates = new HashMap<>();
     @Getter
     @Setter
-    private volatile boolean changesMade = true;
+    private volatile boolean changesMade = false;
+    @Getter
+    private HashMap<Party, Float> precinctsReporting = new HashMap<>();
 
     public WebHook(PrimaryElections instance) {
         this.instance = instance;
@@ -49,7 +51,7 @@ public class WebHook {
             }
         };
 
-        timer.schedule(task, 0, 10000);
+        timer.schedule(task, 0, 5000);
     }
 
     public void setupResults() {
@@ -89,8 +91,8 @@ public class WebHook {
 
             String name = nameElement.getText();
             float votePercent = Float.valueOf(votePercentElm.getText().replace("%", ""));
-            Integer votes = NumberTools.getInteger(votesElm.getText());
-            Integer votesBehind = NumberTools.getInteger(votesBehindElm.getText());
+            Integer votes = NumberTools.getInteger(votesElm.getText().replace(",", ""));
+            Integer votesBehind = NumberTools.getInteger(votesBehindElm.getText().replace(",", ""));
 
             if (votes == null)
                 votes = 0;
@@ -100,6 +102,11 @@ public class WebHook {
 
             Candidate candidate = new Candidate(name, votePercent, votes, votesBehind, party);
             setup(candidate);
+        }
+        if (changesMade) {
+            Element element = doc.findFirst("<div class=\"line-totals\">").findFirst("<div class=\"four-blocks2\">");
+            float reporting = Float.valueOf(element.getText().replace("%", ""));
+            precinctsReporting.put(party, reporting);
         }
     }
 
