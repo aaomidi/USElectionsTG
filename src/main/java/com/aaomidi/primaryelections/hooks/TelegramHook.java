@@ -2,6 +2,7 @@ package com.aaomidi.primaryelections.hooks;
 
 import com.aaomidi.primaryelections.PrimaryElections;
 import com.aaomidi.primaryelections.model.Candidate;
+import com.aaomidi.primaryelections.model.Party;
 import lombok.Getter;
 import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
@@ -42,6 +43,8 @@ public class TelegramHook {
                         return;
                     }
                     webHook.setChangesMade(false);
+                    channel.sendMessage("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 New results incoming! \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14", bot);
+                    Thread.sleep(5000);
                     for (HashMap<String, Candidate> map : webHook.getCandidates().values()) {
                         StringBuilder sb = new StringBuilder();
                         Candidate randomCandidate = null;
@@ -52,7 +55,13 @@ public class TelegramHook {
                         if (randomCandidate == null) {
                             throw new Error("No candidates?");
                         }
-                        sb.insert(0, String.format("%s results:\n", randomCandidate.getParty().getPartyName()));
+                        Party party = randomCandidate.getParty();
+                        if (party == Party.DEMOCRAT) {
+                            sb.insert(0, String.format("\uD83D\uDC34 %s Caucus from Nevada:\n", randomCandidate.getParty().getPartyName()));
+                        } else {
+                            sb.insert(0, String.format("\uD83D\uDC18 %s Primary from South Carolina:\n", randomCandidate.getParty().getPartyName()));
+                            sb.append("\nStay up to date with @USElections!");
+                        }
                         String msg = sb.toString();
                         channel.sendMessage(msg, bot);
                     }
