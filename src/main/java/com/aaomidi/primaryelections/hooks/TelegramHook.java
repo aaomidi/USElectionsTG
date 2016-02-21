@@ -6,6 +6,8 @@ import com.aaomidi.primaryelections.model.Party;
 import lombok.Getter;
 import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
+import pro.zackpollard.telegrambot.api.chat.message.send.ParseMode;
+import pro.zackpollard.telegrambot.api.chat.message.send.SendableTextMessage;
 
 import java.util.Set;
 import java.util.Timer;
@@ -43,7 +45,7 @@ public class TelegramHook {
                         return;
                     }
                     webHook.setChangesMade(false);
-                    channel.sendMessage("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 New results incoming! \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14", bot);
+                    channel.sendMessage("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14", bot);
                     Thread.sleep(5000);
                     for (Set<Candidate> set : webHook.getSortedCandidates().values()) {
                         StringBuilder sb = new StringBuilder();
@@ -61,15 +63,18 @@ public class TelegramHook {
                             return;
                         }
                         if (party == Party.DEMOCRAT) {
-                            sb.insert(0, String.format("\uD83D\uDC34 %s Caucus from Nevada:\n", randomCandidate.getParty().getPartyName()));
+                            sb.insert(0, String.format("*\uD83D\uDC34 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
                         } else {
-                            sb.insert(0, String.format("\uD83D\uDC18 %s Primary from South Carolina:\n", randomCandidate.getParty().getPartyName()));
+                            sb.insert(0, String.format("*\uD83D\uDC18 %s Primary from South Carolina:*\n", randomCandidate.getParty().getPartyName()));
                         }
 
-                        sb.append(String.format("Precincts Reporting: %.2f%%", webHook.getPrecinctsReporting().get(party)));
-                        sb.append("\nStay up to date with @USElections!");
-                        String msg = sb.toString();
-                        channel.sendMessage(msg, bot);
+                        sb.append(String.format("*Precincts Reporting: %.2f%%*", webHook.getPrecinctsReporting().get(party)));
+                        sb.append("\n*Stay up to date with @USElections!*");
+
+                        SendableTextMessage message =
+                                SendableTextMessage.builder().message(sb.toString()).parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
+
+                        channel.sendMessage(message, bot);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

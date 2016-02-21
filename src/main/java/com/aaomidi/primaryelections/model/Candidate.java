@@ -21,7 +21,7 @@ public class Candidate implements Comparable<Candidate> {
 
 
     public String getCandidateInfo() {
-        return String.format("Name: %s\n\tVote Percent: %.2f%%\n\tVotes: %d\n\tVotes Behind: %d\n",
+        return String.format("\n*%s*\n_Vote Percent:_ %.2f%%\n_Votes:_ %d\n_Votes Behind:_ %d\n",
                 name,
                 percent,
                 votes,
