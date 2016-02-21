@@ -57,7 +57,7 @@ public class TelegramHook {
                             throw new Error("No candidates?");
                         }
                         Party party = randomCandidate.getParty();
-                        if (webHook.getPrecinctsReporting().get(party) < 0.1) {
+                        if (webHook.getPrecinctsReporting().get(party) < 0.1 || webHook.getPrecinctsReporting().get(party) >= 99.9) {
                             return;
                         }
                         if (party == Party.DEMOCRAT) {
