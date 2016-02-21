@@ -7,7 +7,7 @@ import lombok.Getter;
 import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
 
-import java.util.HashMap;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,24 +45,28 @@ public class TelegramHook {
                     webHook.setChangesMade(false);
                     channel.sendMessage("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 New results incoming! \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14", bot);
                     Thread.sleep(5000);
-                    for (HashMap<String, Candidate> map : webHook.getCandidates().values()) {
+                    for (Set<Candidate> set : webHook.getSortedCandidates().values()) {
                         StringBuilder sb = new StringBuilder();
                         Candidate randomCandidate = null;
-                        for (Candidate candidate : map.values()) {
+                        for (Candidate candidate : set) {
                             sb.append(candidate.getCandidateInfo());
                             randomCandidate = candidate;
                         }
+
                         if (randomCandidate == null) {
                             throw new Error("No candidates?");
                         }
                         Party party = randomCandidate.getParty();
+                        if (webHook.getPrecinctsReporting().get(party) < 0.1) {
+                            return;
+                        }
                         if (party == Party.DEMOCRAT) {
                             sb.insert(0, String.format("\uD83D\uDC34 %s Caucus from Nevada:\n", randomCandidate.getParty().getPartyName()));
                         } else {
                             sb.insert(0, String.format("\uD83D\uDC18 %s Primary from South Carolina:\n", randomCandidate.getParty().getPartyName()));
                         }
 
-                        sb.append(String.format("Precincts Reporting: %.2f", webHook.getPrecinctsReporting().get(party)));
+                        sb.append(String.format("Precincts Reporting: %.2f%%", webHook.getPrecinctsReporting().get(party)));
                         sb.append("\nStay up to date with @USElections!");
                         String msg = sb.toString();
                         channel.sendMessage(msg, bot);
@@ -75,7 +79,7 @@ public class TelegramHook {
             }
         };
 
-        timer.schedule(task, 1000, 60000);
+        timer.schedule(task, 5000, 60000);
     }
 
 }

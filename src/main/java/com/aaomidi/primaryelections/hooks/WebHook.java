@@ -12,10 +12,7 @@ import com.jaunt.UserAgent;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
@@ -27,10 +24,12 @@ public class WebHook {
     @Getter
     private ReentrantLock lock = new ReentrantLock(true);
     @Getter
-    private HashMap<Party, HashMap<String, Candidate>> candidates = new HashMap<>();
+    private HashMap<Party, Map<String, Candidate>> candidates = new HashMap<>();
+    @Getter
+    private HashMap<Party, Set<Candidate>> sortedCandidates = new HashMap<>();
     @Getter
     @Setter
-    private volatile boolean changesMade = false;
+    private volatile boolean changesMade = true;
     @Getter
     private HashMap<Party, Float> precinctsReporting = new HashMap<>();
 
@@ -58,6 +57,7 @@ public class WebHook {
         UserAgent userAgent;
         try {
             lock.lock();
+            sortedCandidates.clear();
             userAgent = new UserAgent();
             userAgent.visit("http://www.decisiondeskhq.com/nevada-democratic-caucus/");
             setup(Party.DEMOCRAT, userAgent.doc);
@@ -69,6 +69,7 @@ public class WebHook {
         } finally {
             lock.unlock();
         }
+
     }
 
     private void setup(Party party, Document doc) throws Exception {
@@ -103,15 +104,17 @@ public class WebHook {
             Candidate candidate = new Candidate(name, votePercent, votes, votesBehind, party);
             setup(candidate);
         }
-        if (changesMade) {
-            Element element = doc.findFirst("<div class=\"line-totals\">").findFirst("<div class=\"four-blocks2\">");
-            float reporting = Float.valueOf(element.getText().replace("%", ""));
-            precinctsReporting.put(party, reporting);
-        }
+        Element element = doc.findFirst("<div class=\"line-totals\">").findFirst("<div class=\"four-blocks2\">");
+        float reporting = Float.valueOf(element.getText().replace("%", ""));
+        precinctsReporting.put(party, reporting);
     }
 
     private void setup(Candidate candidate) {
-        HashMap<String, Candidate> map = candidates.getOrDefault(candidate.getParty(), new HashMap<>());
+        Set<Candidate> sortedSet = sortedCandidates.getOrDefault(candidate.getParty(), new TreeSet<>());
+        sortedCandidates.put(candidate.getParty(), sortedSet);
+        sortedSet.add(candidate);
+
+        Map<String, Candidate> map = candidates.getOrDefault(candidate.getParty(), new HashMap<>());
         Candidate oldCandidate = map.get(candidate.getName());
         if (oldCandidate != null) {
             if (!candidate.hasChanged(oldCandidate)) {
