@@ -59,10 +59,8 @@ public class WebHook {
             lock.lock();
             sortedCandidates.clear();
             userAgent = new UserAgent();
-            userAgent.visit("http://www.decisiondeskhq.com/nevada-democratic-caucus/");
-            setup(Party.DEMOCRAT, userAgent.doc);
 
-            userAgent.visit("http://www.decisiondeskhq.com/south-carolina-gop-primary/");
+            userAgent.visit("http://www.decisiondeskhq.com/nevada-republican-caucus/");
             setup(Party.REPUBLICAN, userAgent.doc);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -75,7 +73,6 @@ public class WebHook {
     private void setup(Party party, Document doc) throws Exception {
         Elements elements = doc.findEvery("<div class=\"totals-row\">");
         for (Element element : elements) {
-
             Element nameElement = element.findFirst("<div class=\"square-name\">");
             Elements voteInfo = element.findEvery("<div class=\"four-blocks2\">");
 
@@ -89,6 +86,7 @@ public class WebHook {
             Element votePercentElm = iterator.next();
             Element votesElm = iterator.next();
             Element votesBehindElm = iterator.next();
+
 
             String name = nameElement.getText();
             float votePercent = Float.valueOf(votePercentElm.getText().replace("%", ""));
@@ -114,6 +112,7 @@ public class WebHook {
         sortedCandidates.put(candidate.getParty(), sortedSet);
         sortedSet.add(candidate);
 
+
         Map<String, Candidate> map = candidates.getOrDefault(candidate.getParty(), new HashMap<>());
         Candidate oldCandidate = map.get(candidate.getName());
         if (oldCandidate != null) {
@@ -123,6 +122,16 @@ public class WebHook {
         }
         map.put(candidate.getName(), candidate);
         candidates.put(candidate.getParty(), map);
+
         changesMade = true;
+    }
+
+    public boolean shouldMessage() {
+        for (float report : precinctsReporting.values()) {
+            if (report > 0.1) {
+                return true;
+            }
+        }
+        return false;
     }
 }

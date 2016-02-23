@@ -9,7 +9,8 @@ import pro.zackpollard.telegrambot.api.chat.Chat;
 import pro.zackpollard.telegrambot.api.chat.message.send.ParseMode;
 import pro.zackpollard.telegrambot.api.chat.message.send.SendableTextMessage;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +31,7 @@ public class TelegramHook {
         bot.startUpdates(false);
 
         this.channel = TelegramBot.getChat("@USElections");
+        //this.channel = TelegramBot.getChat("55395012");
         this.setupRunnable();
     }
 
@@ -45,9 +47,17 @@ public class TelegramHook {
                         return;
                     }
                     webHook.setChangesMade(false);
-                    channel.sendMessage("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14", bot);
+                    if (!webHook.shouldMessage()) {
+                        return;
+                    }
+                    SendableTextMessage intro =
+                            SendableTextMessage.builder().message("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14").parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
+
+                    channel.sendMessage(intro, bot);
                     Thread.sleep(5000);
-                    for (Set<Candidate> set : webHook.getSortedCandidates().values()) {
+                    // for (Set<Candidate> set : webHook.getSortedCandidates().values()) {
+                    for (Map.Entry<Party, Map<String, Candidate>> map : webHook.getCandidates().entrySet()) {
+                        Collection<Candidate> set = map.getValue().values();
                         StringBuilder sb = new StringBuilder();
                         Candidate randomCandidate = null;
                         for (Candidate candidate : set) {
@@ -65,11 +75,11 @@ public class TelegramHook {
                         if (party == Party.DEMOCRAT) {
                             sb.insert(0, String.format("*\uD83D\uDC34 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
                         } else {
-                            sb.insert(0, String.format("*\uD83D\uDC18 %s Primary from South Carolina:*\n", randomCandidate.getParty().getPartyName()));
+                            sb.insert(0, String.format("*\uD83D\uDC18 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
                         }
 
-                        sb.append(String.format("*Precincts Reporting: %.2f%%*", webHook.getPrecinctsReporting().get(party)));
-                        sb.append("\n*Stay up to date with @USElections!*");
+                        sb.append(String.format("\n*Precincts Reporting: %.2f%%*", webHook.getPrecinctsReporting().get(party)));
+                        sb.append("\n*Stay up to date with* @USElections*!*");
 
                         SendableTextMessage message =
                                 SendableTextMessage.builder().message(sb.toString()).parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
