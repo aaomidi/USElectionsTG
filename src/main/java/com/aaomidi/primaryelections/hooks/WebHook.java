@@ -26,7 +26,7 @@ public class WebHook {
     @Getter
     private HashMap<Party, Map<String, Candidate>> candidates = new HashMap<>();
     @Getter
-    private HashMap<Party, Set<Candidate>> sortedCandidates = new HashMap<>();
+    private HashMap<Party, List<Candidate>> sortedCandidates = new HashMap<>();
     @Getter
     @Setter
     private volatile boolean changesMade = true;
@@ -60,8 +60,10 @@ public class WebHook {
             sortedCandidates.clear();
             userAgent = new UserAgent();
 
-            userAgent.visit("http://www.decisiondeskhq.com/nevada-republican-caucus/");
-            setup(Party.REPUBLICAN, userAgent.doc);
+            //userAgent.visit("http://www.decisiondeskhq.com/nevada-republican-caucus/");
+            //setup(Party.REPUBLICAN, userAgent.doc);
+            userAgent.visit("http://www.decisiondeskhq.com/south-carolina-democratic-primary/");
+            setup(Party.DEMOCRAT, userAgent.doc);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -108,9 +110,9 @@ public class WebHook {
     }
 
     private void setup(Candidate candidate) {
-        Set<Candidate> sortedSet = sortedCandidates.getOrDefault(candidate.getParty(), new TreeSet<>());
-        sortedCandidates.put(candidate.getParty(), sortedSet);
-        sortedSet.add(candidate);
+        List<Candidate> sortedList = sortedCandidates.getOrDefault(candidate.getParty(), new ArrayList<>());
+        sortedCandidates.put(candidate.getParty(), sortedList);
+        sortedList.add(candidate);
 
 
         Map<String, Candidate> map = candidates.getOrDefault(candidate.getParty(), new HashMap<>());

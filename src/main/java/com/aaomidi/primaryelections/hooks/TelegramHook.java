@@ -8,9 +8,10 @@ import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
 import pro.zackpollard.telegrambot.api.chat.message.send.ParseMode;
 import pro.zackpollard.telegrambot.api.chat.message.send.SendableTextMessage;
+import pro.zackpollard.telegrambot.api.user.User;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,6 +26,7 @@ public class TelegramHook {
     private final Chat channel;
 
     public TelegramHook(PrimaryElections instance, String auth) {
+        User user;
         this.instance = instance;
 
         this.bot = TelegramBot.login(auth);
@@ -32,6 +34,7 @@ public class TelegramHook {
 
         this.channel = TelegramBot.getChat("@USElections");
         //this.channel = TelegramBot.getChat("55395012");
+        //this.channel = TelegramBot.getChat("-104142561");
         this.setupRunnable();
     }
 
@@ -55,9 +58,10 @@ public class TelegramHook {
 
                     channel.sendMessage(intro, bot);
                     Thread.sleep(5000);
-                    // for (Set<Candidate> set : webHook.getSortedCandidates().values()) {
-                    for (Map.Entry<Party, Map<String, Candidate>> map : webHook.getCandidates().entrySet()) {
-                        Collection<Candidate> set = map.getValue().values();
+                    for (List<Candidate> set : webHook.getSortedCandidates().values()) {
+                        Collections.sort(set);
+                        //for (Map.Entry<Party, Map<String, Candidate>> map : webHook.getCandidates().entrySet()) {
+                        //Collection<Candidate> set = map.getValue().values();
                         StringBuilder sb = new StringBuilder();
                         Candidate randomCandidate = null;
                         for (Candidate candidate : set) {
@@ -73,7 +77,7 @@ public class TelegramHook {
                             return;
                         }
                         if (party == Party.DEMOCRAT) {
-                            sb.insert(0, String.format("*\uD83D\uDC34 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
+                            sb.insert(0, String.format("*\uD83D\uDC34 %s Primary from South Carolina:*\n", randomCandidate.getParty().getPartyName()));
                         } else {
                             sb.insert(0, String.format("*\uD83D\uDC18 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
                         }
