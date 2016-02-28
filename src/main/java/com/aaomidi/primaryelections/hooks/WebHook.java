@@ -124,6 +124,10 @@ public class WebHook {
 
     public boolean shouldReport() {
         for (Race race : races) {
+            if (race.isChangesMade())
+                return true;
+        }
+        for (Race race : races) {
             if (race.getReportingPercent() > 0.1) {
                 return true;
             }

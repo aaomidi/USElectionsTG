@@ -41,6 +41,7 @@ public class Race {
     }
 
     public void updateCandidates(List<Candidate> list) {
+        changesMade = true;
         candidates = new HashMap<>();
         for (Candidate c : list) {
             candidates.put(c.getName(), c);
