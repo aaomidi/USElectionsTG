@@ -2,7 +2,10 @@ package com.aaomidi.primaryelections.hooks;
 
 import com.aaomidi.primaryelections.PrimaryElections;
 import com.aaomidi.primaryelections.model.Candidate;
-import com.aaomidi.primaryelections.model.Party;
+import com.aaomidi.primaryelections.model.Race;
+import com.aaomidi.primaryelections.model.helper.Party;
+import com.aaomidi.primaryelections.model.helper.RaceType;
+import com.aaomidi.primaryelections.model.helper.State;
 import com.aaomidi.primaryelections.util.Log;
 import com.aaomidi.primaryelections.util.NumberTools;
 import com.jaunt.Document;
@@ -22,6 +25,8 @@ import java.util.logging.Level;
 public class WebHook {
     private final PrimaryElections instance;
     @Getter
+    private final List<Race> races = new ArrayList<>();
+    @Getter
     private ReentrantLock lock = new ReentrantLock(true);
     @Getter
     private HashMap<Party, Map<String, Candidate>> candidates = new HashMap<>();
@@ -35,6 +40,7 @@ public class WebHook {
 
     public WebHook(PrimaryElections instance) {
         this.instance = instance;
+        races.add(new Race(State.SOUTH_CAROLINA, Party.DEMOCRAT, RaceType.PRIMARY, "http://www.decisiondeskhq.com/south-carolina-democratic-primary/"));
 
         this.setupRunnable();
     }
@@ -45,7 +51,8 @@ public class WebHook {
             @Override
             public void run() {
                 new Thread(() -> {
-                    setupResults();
+                    //setupResults();
+                    setupRaces();
                 }).start();
             }
         };
@@ -53,26 +60,27 @@ public class WebHook {
         timer.schedule(task, 0, 5000);
     }
 
-    public void setupResults() {
-        UserAgent userAgent;
+    public void setupRaces() {
         try {
             lock.lock();
-            sortedCandidates.clear();
-            userAgent = new UserAgent();
-
-            //userAgent.visit("http://www.decisiondeskhq.com/nevada-republican-caucus/");
-            //setup(Party.REPUBLICAN, userAgent.doc);
-            userAgent.visit("http://www.decisiondeskhq.com/south-carolina-democratic-primary/");
-            setup(Party.DEMOCRAT, userAgent.doc);
+            for (Race race : races) {
+                try {
+                    UserAgent userAgent = new UserAgent();
+                    userAgent.visit(race.getUrl());
+                    setupRace(race, userAgent.doc);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             lock.unlock();
         }
-
     }
 
-    private void setup(Party party, Document doc) throws Exception {
+    public void setupRace(Race race, Document doc) throws Exception {
+        List<Candidate> candidates = new ArrayList<>();
         Elements elements = doc.findEvery("<div class=\"totals-row\">");
         for (Element element : elements) {
             Element nameElement = element.findFirst("<div class=\"square-name\">");
@@ -101,36 +109,22 @@ public class WebHook {
             if (votesBehind == null)
                 votesBehind = 0;
 
-            Candidate candidate = new Candidate(name, votePercent, votes, votesBehind, party);
-            setup(candidate);
+            Candidate candidate = new Candidate(name, votePercent, votes, votesBehind, race.getParty());
+            candidates.add(candidate);
+        }
+        if (race.hasChanged(candidates)) {
+            race.updateCandidates(candidates);
         }
         Element element = doc.findFirst("<div class=\"line-totals\">").findFirst("<div class=\"four-blocks2\">");
         float reporting = Float.valueOf(element.getText().replace("%", ""));
-        precinctsReporting.put(party, reporting);
+
+        race.setReportingPercent(reporting);
     }
 
-    private void setup(Candidate candidate) {
-        List<Candidate> sortedList = sortedCandidates.getOrDefault(candidate.getParty(), new ArrayList<>());
-        sortedCandidates.put(candidate.getParty(), sortedList);
-        sortedList.add(candidate);
 
-
-        Map<String, Candidate> map = candidates.getOrDefault(candidate.getParty(), new HashMap<>());
-        Candidate oldCandidate = map.get(candidate.getName());
-        if (oldCandidate != null) {
-            if (!candidate.hasChanged(oldCandidate)) {
-                return;
-            }
-        }
-        map.put(candidate.getName(), candidate);
-        candidates.put(candidate.getParty(), map);
-
-        changesMade = true;
-    }
-
-    public boolean shouldMessage() {
-        for (float report : precinctsReporting.values()) {
-            if (report > 0.1) {
+    public boolean shouldReport() {
+        for (Race race : races) {
+            if (race.getReportingPercent() > 0.1) {
                 return true;
             }
         }

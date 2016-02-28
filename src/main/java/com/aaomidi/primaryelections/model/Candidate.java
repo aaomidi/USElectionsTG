@@ -1,5 +1,6 @@
 package com.aaomidi.primaryelections.model;
 
+import com.aaomidi.primaryelections.model.helper.Party;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

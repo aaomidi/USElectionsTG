@@ -1,8 +1,7 @@
 package com.aaomidi.primaryelections.hooks;
 
 import com.aaomidi.primaryelections.PrimaryElections;
-import com.aaomidi.primaryelections.model.Candidate;
-import com.aaomidi.primaryelections.model.Party;
+import com.aaomidi.primaryelections.model.Race;
 import lombok.Getter;
 import pro.zackpollard.telegrambot.api.TelegramBot;
 import pro.zackpollard.telegrambot.api.chat.Chat;
@@ -10,8 +9,6 @@ import pro.zackpollard.telegrambot.api.chat.message.send.ParseMode;
 import pro.zackpollard.telegrambot.api.chat.message.send.SendableTextMessage;
 import pro.zackpollard.telegrambot.api.user.User;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,50 +43,7 @@ public class TelegramHook {
             public void run() {
                 try {
                     webHook.getLock().lock();
-                    if (!webHook.isChangesMade()) {
-                        return;
-                    }
-                    webHook.setChangesMade(false);
-                    if (!webHook.shouldMessage()) {
-                        return;
-                    }
-                    SendableTextMessage intro =
-                            SendableTextMessage.builder().message("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14").parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
-
-                    channel.sendMessage(intro, bot);
-                    Thread.sleep(5000);
-                    for (List<Candidate> set : webHook.getSortedCandidates().values()) {
-                        Collections.sort(set);
-                        //for (Map.Entry<Party, Map<String, Candidate>> map : webHook.getCandidates().entrySet()) {
-                        //Collection<Candidate> set = map.getValue().values();
-                        StringBuilder sb = new StringBuilder();
-                        Candidate randomCandidate = null;
-                        for (Candidate candidate : set) {
-                            sb.append(candidate.getCandidateInfo());
-                            randomCandidate = candidate;
-                        }
-
-                        if (randomCandidate == null) {
-                            throw new Error("No candidates?");
-                        }
-                        Party party = randomCandidate.getParty();
-                        if (webHook.getPrecinctsReporting().get(party) < 0.1 || webHook.getPrecinctsReporting().get(party) >= 99.9) {
-                            return;
-                        }
-                        if (party == Party.DEMOCRAT) {
-                            sb.insert(0, String.format("*\uD83D\uDC34 %s Primary from South Carolina:*\n", randomCandidate.getParty().getPartyName()));
-                        } else {
-                            sb.insert(0, String.format("*\uD83D\uDC18 %s Caucus from Nevada:*\n", randomCandidate.getParty().getPartyName()));
-                        }
-
-                        sb.append(String.format("\n*Precincts Reporting: %.2f%%*", webHook.getPrecinctsReporting().get(party)));
-                        sb.append("\n*Stay up to date with* @USElections*!*");
-
-                        SendableTextMessage message =
-                                SendableTextMessage.builder().message(sb.toString()).parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
-
-                        channel.sendMessage(message, bot);
-                    }
+                    sendResults();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 } finally {
@@ -101,4 +55,42 @@ public class TelegramHook {
         timer.schedule(task, 5000, 60000);
     }
 
+    public void sendResults() {
+        WebHook webHook = instance.getWebHook();
+        try {
+            webHook.getLock().lock();
+            webHook.setChangesMade(false);
+            if (!webHook.shouldReport()) {
+                //   return;
+            }
+            SendableTextMessage intro =
+                    SendableTextMessage.builder().message("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14").parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
+
+            channel.sendMessage(intro, bot);
+            Thread.sleep(5000);
+
+            for (Race race : webHook.getRaces()) {
+                String result = race.getResults();
+                if (!race.isChangesMade())
+                    continue;
+
+                if (result == null)
+                    continue;
+                if (race.getReportingPercent() > 95)
+                    continue;
+
+                race.setChangesMade(false);
+                SendableTextMessage message =
+                        SendableTextMessage.builder().message(result).parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();
+
+                channel.sendMessage(message, bot);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            webHook.getLock().unlock();
+        }
+    }
 }
+
+
