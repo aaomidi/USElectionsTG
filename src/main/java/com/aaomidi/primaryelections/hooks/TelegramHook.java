@@ -59,9 +59,8 @@ public class TelegramHook {
         WebHook webHook = instance.getWebHook();
         try {
             webHook.getLock().lock();
-            webHook.setChangesMade(false);
             if (!webHook.shouldReport()) {
-                //   return;
+                return;
             }
             SendableTextMessage intro =
                     SendableTextMessage.builder().message("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14").parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).build();

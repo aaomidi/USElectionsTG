@@ -13,7 +13,6 @@ import com.jaunt.Element;
 import com.jaunt.Elements;
 import com.jaunt.UserAgent;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,21 +27,16 @@ public class WebHook {
     private final List<Race> races = new ArrayList<>();
     @Getter
     private ReentrantLock lock = new ReentrantLock(true);
-    @Getter
-    private HashMap<Party, Map<String, Candidate>> candidates = new HashMap<>();
-    @Getter
-    private HashMap<Party, List<Candidate>> sortedCandidates = new HashMap<>();
-    @Getter
-    @Setter
-    private volatile boolean changesMade = true;
-    @Getter
-    private HashMap<Party, Float> precinctsReporting = new HashMap<>();
 
     public WebHook(PrimaryElections instance) {
         this.instance = instance;
-        races.add(new Race(State.SOUTH_CAROLINA, Party.DEMOCRAT, RaceType.PRIMARY, "http://www.decisiondeskhq.com/south-carolina-democratic-primary/"));
+        this.start();
 
         this.setupRunnable();
+    }
+
+    public void start() {
+        races.add(new Race(State.SOUTH_CAROLINA, Party.DEMOCRAT, RaceType.PRIMARY, "http://www.decisiondeskhq.com/south-carolina-democratic-primary/"));
     }
 
     public void setupRunnable() {
