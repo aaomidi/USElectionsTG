@@ -24,7 +24,7 @@ import java.util.logging.Level;
 public class WebHook {
     private final PrimaryElections instance;
     @Getter
-    private final List<Race> races = new ArrayList<>();
+    private final LinkedList<Race> races = new LinkedList<>();
     @Getter
     private ReentrantLock lock = new ReentrantLock(true);
 
@@ -44,7 +44,7 @@ public class WebHook {
         races.add(new Race(State.ALASKA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
 
         races.add(new Race(State.ARKANSAS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.ARKANSAS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
+        races.add(new Race(State.ARKANSAS, Party.REPUBLICAN, RaceType.PRIMARY, ""));
 
         races.add(new Race(State.COLORADO, Party.DEMOCRAT, RaceType.CAUCUS, ""));
         races.add(new Race(State.COLORADO, Party.REPUBLICAN, RaceType.CAUCUS, ""));
@@ -57,8 +57,6 @@ public class WebHook {
 
         races.add(new Race(State.MINNESOTA, Party.DEMOCRAT, RaceType.CAUCUS, ""));
         races.add(new Race(State.MINNESOTA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
-
-        races.add(new Race(State.NORTH_DAKOTA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
 
         races.add(new Race(State.OKLAHOMA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
         races.add(new Race(State.OKLAHOMA, Party.REPUBLICAN, RaceType.PRIMARY, ""));
@@ -73,8 +71,6 @@ public class WebHook {
         races.add(new Race(State.VERMONT, Party.REPUBLICAN, RaceType.PRIMARY, ""));
 
         races.add(new Race(State.VIRGINIA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.WYOMING, Party.REPUBLICAN, RaceType.CAUCUS, ""));
     }
 
     public void setupRunnable() {
@@ -83,13 +79,20 @@ public class WebHook {
             @Override
             public void run() {
                 new Thread(() -> {
+                    try {
+                        lock.lock();
+                        setupRaces();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        lock.unlock();
+                    }
                     //setupResults();
-                    setupRaces();
                 }).start();
             }
         };
 
-        timer.schedule(task, 0, 5000);
+        timer.schedule(task, 1000, 5000);
     }
 
     public void setupRaces() {
@@ -112,6 +115,7 @@ public class WebHook {
     }
 
     public void setupRace(Race race, Document doc) throws Exception {
+        System.out.println(race.getState().getName() + " " + race.getParty().getPartyName());
         List<Candidate> candidates = new ArrayList<>();
         Elements elements = doc.findEvery("<div class=\"totals-row\">");
         for (Element element : elements) {

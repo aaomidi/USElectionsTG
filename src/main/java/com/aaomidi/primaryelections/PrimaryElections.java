@@ -16,6 +16,10 @@ public class PrimaryElections {
     private WebHook webHook;
 
     public PrimaryElections(String... args) {
+        System.setProperty("socksProxyHost", "localhost");
+        System.setProperty("socksProxyPort", "1080");
+
+
         if (args.length == 0) {
             Log.log(Level.SEVERE, "No telegram key specified. Shutting down.");
             System.exit(0);
