@@ -41,7 +41,7 @@ public class WebHook {
 
         races.add(new Race(State.AMERICAN_SAMOA, Party.DEMOCRAT, RaceType.CAUCUS, ""));
 
-        races.add(new Race(State.ALASKA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
+        /*races.add(new Race(State.ALASKA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
 
         races.add(new Race(State.ARKANSAS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
         races.add(new Race(State.ARKANSAS, Party.REPUBLICAN, RaceType.PRIMARY, ""));
@@ -70,7 +70,7 @@ public class WebHook {
         races.add(new Race(State.VERMONT, Party.DEMOCRAT, RaceType.PRIMARY, ""));
         races.add(new Race(State.VERMONT, Party.REPUBLICAN, RaceType.PRIMARY, ""));
 
-        races.add(new Race(State.VIRGINIA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
+        races.add(new Race(State.VIRGINIA, Party.DEMOCRAT, RaceType.PRIMARY, "")); */
     }
 
     public void setupRunnable() {

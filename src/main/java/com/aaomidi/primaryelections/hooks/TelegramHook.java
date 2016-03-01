@@ -29,9 +29,9 @@ public class TelegramHook {
         this.bot = TelegramBot.login(auth);
         bot.startUpdates(false);
 
-        //this.channel = TelegramBot.getChat("@USElections");
+        this.channel = TelegramBot.getChat("@USElections");
         //this.channel = TelegramBot.getChat("55395012");
-        this.channel = TelegramBot.getChat("-104142561");
+        //this.channel = TelegramBot.getChat("-104142561");
         this.setupRunnable();
     }
 
@@ -60,13 +60,13 @@ public class TelegramHook {
         try {
             webHook.getLock().lock();
             if (!webHook.shouldReport()) {
-                //return;
+                return;
             }
             SendableTextMessage intro =
                     SendableTextMessage.builder().message("\uD83D\uDD14\uD83D\uDD14\uD83D\uDD14 *New results incoming!* \uD83D\uDD14\uD83D\uDD14\uD83D\uDD14").parseMode(ParseMode.MARKDOWN).disableWebPagePreview(true).disableNotification(true).build();
 
             channel.sendMessage(intro, bot);
-            Thread.sleep(5000);
+            Thread.sleep(200);
 
             for (Race race : webHook.getRaces()) {
                 String result = race.getResults();
@@ -87,7 +87,7 @@ public class TelegramHook {
                         SendableTextMessage.builder().message(result).parseMode(ParseMode.MARKDOWN).disableNotification(true).disableWebPagePreview(true).build();
 
                 channel.sendMessage(message, bot);
-                Thread.sleep(100);
+                Thread.sleep(1000);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
