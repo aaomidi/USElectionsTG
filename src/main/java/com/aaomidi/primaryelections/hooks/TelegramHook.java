@@ -76,8 +76,6 @@ public class TelegramHook {
                 if (result == null)
                     continue;
 
-                if (race.getReportingPercent() < 1)
-                    continue;
 
                 if (race.getReportingPercent() > 95)
                     continue;
