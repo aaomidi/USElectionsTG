@@ -36,42 +36,20 @@ public class WebHook {
     }
 
     public void start() {
-        races.add(new Race(State.ALABAMA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.ALABAMA, Party.REPUBLICAN, RaceType.PRIMARY, ""));
+        races.add(new Race(State.KANSAS, Party.DEMOCRAT, RaceType.CAUCUS));
+        races.add(new Race(State.KANSAS, Party.REPUBLICAN, RaceType.CAUCUS));
 
-        races.add(new Race(State.AMERICAN_SAMOA, Party.DEMOCRAT, RaceType.CAUCUS, ""));
+        races.add(new Race(State.KENTUCKY, Party.REPUBLICAN, RaceType.CAUCUS));
 
-        races.add(new Race(State.ALASKA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
+        races.add(new Race(State.LOUISIANA, Party.DEMOCRAT, RaceType.PRIMARY));
+        races.add(new Race(State.LOUISIANA, Party.REPUBLICAN, RaceType.PRIMARY));
 
-        races.add(new Race(State.ARKANSAS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.ARKANSAS, Party.REPUBLICAN, RaceType.PRIMARY, ""));
+        races.add(new Race(State.MAINE, Party.DEMOCRAT, RaceType.CAUCUS));
+        races.add(new Race(State.MAINE, Party.REPUBLICAN, RaceType.CAUCUS));
 
-        races.add(new Race(State.COLORADO, Party.DEMOCRAT, RaceType.CAUCUS, ""));
-        races.add(new Race(State.COLORADO, Party.REPUBLICAN, RaceType.CAUCUS, ""));
+        races.add(new Race(State.NEBRASKA, Party.DEMOCRAT, RaceType.CAUCUS));
 
-        races.add(new Race(State.GEORGIA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.GEORGIA, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.MASSACHUSETTS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.MASSACHUSETTS, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.MINNESOTA, Party.DEMOCRAT, RaceType.CAUCUS, ""));
-        races.add(new Race(State.MINNESOTA, Party.REPUBLICAN, RaceType.CAUCUS, ""));
-
-        races.add(new Race(State.OKLAHOMA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.OKLAHOMA, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.TENNESSEE, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.TENNESSEE, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.TEXAS, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.TEXAS, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.VERMONT, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.VERMONT, Party.REPUBLICAN, RaceType.PRIMARY, ""));
-
-        races.add(new Race(State.VIRGINIA, Party.DEMOCRAT, RaceType.PRIMARY, ""));
-        races.add(new Race(State.VIRGINIA, Party.REPUBLICAN, RaceType.PRIMARY, ""));
+        races.add(new Race(State.PUERTO_RICO, Party.REPUBLICAN, RaceType.PRIMARY));
     }
 
     public void setupRunnable() {

@@ -76,12 +76,13 @@ public class TelegramHook {
                 if (result == null)
                     continue;
 
-                if (race.getReportingPercent() < 0.1)
+                if (race.getReportingPercent() < 0.1) {
                     continue;
+                }
 
-                if (race.getReportingPercent() > 95)
+                if (race.getReportingPercent() > 95) {
                     continue;
-
+                }
                 race.setChangesMade(false);
                 SendableTextMessage message =
                         SendableTextMessage.builder().message(result).parseMode(ParseMode.MARKDOWN).disableNotification(true).disableWebPagePreview(true).build();

@@ -34,6 +34,10 @@ public class Race {
     @Setter
     private float reportingPercent = 0;
 
+    public Race(State state, Party party, RaceType raceType) {
+        this(state, party, raceType, "");
+    }
+
     public Race(State state, Party party, RaceType raceType, String url) {
         this.state = state;
         this.party = party;
