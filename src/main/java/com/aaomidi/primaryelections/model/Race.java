@@ -102,6 +102,7 @@ public class Race {
         }
         sb.append(String.format("\n*Precincts Reporting: %.2f%%*", getReportingPercent()));
         sb.append("\n*Stay up to date with* @USElections*!*");
+        sb.append("\n\n#" + state.getAbbreviation());
         return sb.toString();
     }
 }
