@@ -36,20 +36,15 @@ public class WebHook {
     }
 
     public void start() {
-        races.add(new Race(State.FLORIDA, Party.DEMOCRAT, RaceType.PRIMARY));
-        races.add(new Race(State.FLORIDA, Party.REPUBLICAN, RaceType.PRIMARY));
+        races.add(new Race(State.AMERICAN_SAMOA, Party.REPUBLICAN, RaceType.CAUCUS));
 
-        races.add(new Race(State.MISSOURI, Party.DEMOCRAT, RaceType.PRIMARY));
-        races.add(new Race(State.MISSOURI, Party.REPUBLICAN, RaceType.PRIMARY));
+        races.add(new Race(State.ARIZONA, Party.DEMOCRAT, RaceType.PRIMARY));
+        races.add(new Race(State.ARIZONA, Party.REPUBLICAN, RaceType.PRIMARY));
 
-        races.add(new Race(State.OHIO, Party.DEMOCRAT, RaceType.PRIMARY));
-        races.add(new Race(State.OHIO, Party.REPUBLICAN, RaceType.PRIMARY));
+        races.add(new Race(State.IDAHO, Party.DEMOCRAT, RaceType.CAUCUS));
 
-        races.add(new Race(State.NORTH_CAROLINA, Party.DEMOCRAT, RaceType.PRIMARY));
-        races.add(new Race(State.NORTH_CAROLINA, Party.REPUBLICAN, RaceType.PRIMARY));
-
-        races.add(new Race(State.ILLINOIS, Party.DEMOCRAT, RaceType.PRIMARY));
-        races.add(new Race(State.ILLINOIS, Party.REPUBLICAN, RaceType.PRIMARY));
+        races.add(new Race(State.UTAH, Party.DEMOCRAT, RaceType.CAUCUS));
+        races.add(new Race(State.UTAH, Party.REPUBLICAN, RaceType.CAUCUS));
     }
 
     public void setupRunnable() {
