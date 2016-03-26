@@ -96,7 +96,7 @@ public class Race {
         if (list == null) return null;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("*%s %s Primary from %s:*\n", party.getEmoji(), party.getPartyName(), state.getName()));
+        sb.append(String.format("*%s %s %s from %s:*\n", party.getEmoji(), party.getPartyName(), getRaceType().getTypeName(), state.getName()));
         for (Candidate candidate : list) {
             sb.append(candidate.getCandidateInfo());
         }
