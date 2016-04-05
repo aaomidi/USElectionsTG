@@ -36,11 +36,8 @@ public class WebHook {
     }
 
     public void start() {
-        races.add(new Race(State.ALASKA, Party.DEMOCRAT, RaceType.CAUCUS));
-
-        races.add(new Race(State.HAWAII, Party.DEMOCRAT, RaceType.CAUCUS));
-
-        races.add(new Race(State.WASHINGTON, Party.DEMOCRAT, RaceType.CAUCUS));
+        races.add(new Race(State.WISCONSIN, Party.DEMOCRAT, RaceType.PRIMARY));
+        races.add(new Race(State.WISCONSIN, Party.REPUBLICAN, RaceType.PRIMARY));
     }
 
     public void setupRunnable() {
