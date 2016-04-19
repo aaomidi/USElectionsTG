@@ -79,6 +79,7 @@ public class TelegramHook {
             String message = race.getInitialMessage();
             SendableTextMessage msg = SendableTextMessage
                     .builder()
+                    .disableNotification(true)
                     .parseMode(ParseMode.MARKDOWN)
                     .message(message)
                     .build();
@@ -112,8 +113,8 @@ public class TelegramHook {
                 race.setChangesMade(false);
                 Log.log(Level.INFO, String.format("Reporting %s, %s right now", race.getParty(), race.getState()));
 
-                bot.editMessageText(cachedMessages.get(race),
-                        result, ParseMode.MARKDOWN, true, null);
+                //bot.editMessageText(cachedMessages.get(race), result, ParseMode.MARKDOWN, true, null);
+                bot.editMessageText("@USElections", cachedMessages.get(race).getMessageId(), result, ParseMode.MARKDOWN, true, null);
 
                 Thread.sleep(1000);
             }
