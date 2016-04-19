@@ -35,11 +35,11 @@ public class TelegramHook {
         this.bot = TelegramBot.login(auth);
         bot.startUpdates(false);
 
-        //this.channel = TelegramBot.getChat("@USElections");
+        this.channel = bot.getChat("@USElections");
         //this.channel = TelegramBot.getChat("55395012");
         //this.channel = TelegramBot.getChat("-104142561");
         //this.channel = bot.getChat("-14978569");
-        this.channel = bot.getChat("-1001033454849");
+        //this.channel = bot.getChat("-1001033454849");
 
         this.setupRunnable();
     }
