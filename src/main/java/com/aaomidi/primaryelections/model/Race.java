@@ -91,6 +91,17 @@ public class Race {
         return list;
     }
 
+    public String getInitialMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("*%s %s %s from %s:*\n", party.getEmoji(), party.getPartyName(), getRaceType().getTypeName(), state.getName()));
+        sb.append("\nWill update when results start coming in!\n");
+        sb.append(String.format("\n*Precincts Reporting: %.2f%%*", getReportingPercent()));
+        sb.append("\n*Stay up to date with* @USElections*!*");
+        sb.append("\n\n#" + state.getAbbreviation());
+
+        return sb.toString();
+    }
+
     public String getResults() {
         List<Candidate> list = getSortedCandidates();
         if (list == null) return null;

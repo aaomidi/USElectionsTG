@@ -38,6 +38,9 @@ public class WebHook {
     public void start() {
         races.add(new Race(State.NEW_YORK, Party.DEMOCRAT, RaceType.PRIMARY));
         races.add(new Race(State.NEW_YORK, Party.REPUBLICAN, RaceType.PRIMARY));
+
+        races.add(new Race(State.WISCONSIN, Party.DEMOCRAT, RaceType.PRIMARY));
+        races.add(new Race(State.WISCONSIN, Party.REPUBLICAN, RaceType.PRIMARY));
     }
 
     public void setupRunnable() {
@@ -54,12 +57,11 @@ public class WebHook {
                     } finally {
                         lock.unlock();
                     }
-                    //setupResults();
                 }).start();
             }
         };
 
-        timer.schedule(task, 1000, 5000);
+        timer.schedule(task, 2000, 5000);
     }
 
     public void setupRaces() {
@@ -127,7 +129,7 @@ public class WebHook {
 
     public boolean shouldReport() {
         for (Race race : races) {
-            if (race.isChangesMade() && race.getResults() != null && race.getReportingPercent() > 0.1 && race.getReportingPercent() < 95)
+            if (race.isChangesMade() && race.getResults() != null)
                 return true;
         }
         return false;

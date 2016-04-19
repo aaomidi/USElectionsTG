@@ -16,7 +16,6 @@ public class PrimaryElections {
     private WebHook webHook;
 
     public PrimaryElections(String... args) {
-
         if (args.length == 0) {
             Log.log(Level.SEVERE, "No telegram key specified. Shutting down.");
             System.exit(0);
